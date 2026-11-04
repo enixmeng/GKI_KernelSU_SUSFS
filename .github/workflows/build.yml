@@ -1024,7 +1024,7 @@ jobs:
             echo "  已强制: ${cfg}=${val}"
           }
           set_config_value CONFIG_GKI_TASK_STRUCT_VENDOR_SIZE_MAX 512
-          set_config_value CONFIG_TLS m
+          set_config_value CONFIG_TLS y
           set_config_value CONFIG_STREAM_PARSER y
 
           echo "Droidspaces 集成完成"
