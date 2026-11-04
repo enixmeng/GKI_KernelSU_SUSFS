@@ -1029,11 +1029,11 @@ jobs:
           # rust binder 内建化:stock 的 rust_binder.ko(system_dlkm)与本树 rust crate hash 不同,
           # CRC 无法对齐 -> binder 模块必加载失败 -> 卡 logo。内建后不再依赖模块加载。
           set_config_value CONFIG_ANDROID_BINDER_IPC_RUST y
-          # 防御:若 kleaf target 声明了 rust_binder.ko 为模块输出,而 defconfig 已内建,会报错,先移除声明
-          if grep -q "rust_binder.ko" "$KERNEL_ROOT/common/BUILD.bazel" 2>/dev/null; then
-            sed -i "/rust_binder\\.ko/d" "$KERNEL_ROOT/common/BUILD.bazel"
-            echo "  已从 BUILD.bazel module_outs 移除 rust_binder.ko"
-          fi
+          # 防御:binder 内建后,全树清除 module_outs/dist 对 rust_binder.ko 的引用
+          grep -rl "rust_binder.ko" "$KERNEL_ROOT/common" "$KERNEL_ROOT/build" 2>/dev/null | sort -u | while read -r f; do
+            sed -i "/rust_binder\\.ko/d" "$f"
+            echo "  已清理引用: $f"
+          done
 
           echo "Droidspaces 集成完成"
 
