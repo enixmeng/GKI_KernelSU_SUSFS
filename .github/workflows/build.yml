@@ -1013,6 +1013,20 @@ jobs:
           enable_config_if_defined CONFIG_NETFILTER_XT_TARGET_REJECT
           enable_config_if_defined CONFIG_IP_NF_TARGET_REJECT
 
+          # ==== 对齐联想 TB324ZC stock 基线 ====
+          # 厂商模块按 CONFIG_GKI_TASK_STRUCT_VENDOR_SIZE_MAX=512 的 task_struct 布局构建,
+          # AOSP 默认(1024/1280)会使全量符号 CRC 变化 -> vendor 模块全部拒载 -> 卡 logo。
+          set_config_value() {
+            local cfg="$1" val="$2"
+            sed -i "/^# ${cfg} is not set$/d" "$DEFCONFIG"
+            sed -i "/^${cfg}=.*$/d" "$DEFCONFIG"
+            echo "${cfg}=${val}" >> "$DEFCONFIG"
+            echo "  已强制: ${cfg}=${val}"
+          }
+          set_config_value CONFIG_GKI_TASK_STRUCT_VENDOR_SIZE_MAX 512
+          set_config_value CONFIG_TLS m
+          set_config_value CONFIG_STREAM_PARSER y
+
           echo "Droidspaces 集成完成"
 
           echo "GKI6.6 普通用户联网专用配置 (Droidspaces)"
