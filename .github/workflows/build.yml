@@ -992,7 +992,9 @@ jobs:
           enable_config CONFIG_POSIX_MQUEUE
           enable_config CONFIG_IPC_NS
           enable_config CONFIG_PID_NS
-          enable_config CONFIG_DEVTMPFS
+          # TB324ZC 联想 stock: DEVTMPFS=n, init 自管 /dev; GKI 默认 =y 会与 init 冲突致 early-boot 循环
+          echo "  已禁用: CONFIG_DEVTMPFS (对齐联想 stock 基线)"
+          sed -i "s/^CONFIG_DEVTMPFS=y$/# CONFIG_DEVTMPFS is not set/" "$DEFCONFIG"
 
           # 用户命名空间：上游文档列为可选但推荐，用于修复 docker unsafe procfs 报错。
           # init/Kconfig 中无 depends on，且 struct cred 的 user_ns/ucounts 是无条件成员，
