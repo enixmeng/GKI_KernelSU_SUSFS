@@ -921,7 +921,9 @@ jobs:
           echo "应用 Droidspaces SYSVIPC kABI 修复补丁 (槽位: $SLOT / $SLOT_NAME)..."
           case "$KERNEL_VER" in
             6.12)
-              PATCH_FILE="$DROIDSPACES_PATCHES/kernel-6.12/001.GKI-6.12-or-above-fix_sysvipc_kabi.patch"
+              # TB324ZC: 改用 ANDROID_KABI_RESERVE 标准槽位补丁 (below-6.12/1_2_3),
+          # 6.12 主补丁的 packed union 在联想 512 定制布局下会破坏 task_struct → vendor CRC 全崩 → 秒重启
+          PATCH_FILE="$DROIDSPACES_PATCHES/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_1_2_3.patch"
               ;;
             5.10|5.15|6.1|6.6)
               PATCH_FILE="$DROIDSPACES_PATCHES/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_${SLOT_NAME}.patch"
