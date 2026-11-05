@@ -921,9 +921,10 @@ jobs:
           echo "应用 Droidspaces SYSVIPC kABI 修复补丁 (槽位: $SLOT / $SLOT_NAME)..."
           case "$KERNEL_VER" in
             6.12)
-              # TB324ZC: 改用 ANDROID_KABI_RESERVE 标准槽位补丁 (below-6.12/1_2_3),
-          # 6.12 主补丁的 packed union 在联想 512 定制布局下会破坏 task_struct → vendor CRC 全崩 → 秒重启
-          PATCH_FILE="$DROIDSPACES_PATCHES/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_1_2_3.patch"
+              # TB324ZC: 6.12 树 KABI_RESERVE(1)(2)(3) 已被占用 (dmabuf/erratum/dumpable),
+              # 槽位补丁 1_2_3 的 hunk2 无法应用 (CI 实证, 本地复现)。
+              # 改用自写 tail_45 补丁: RESERVE(4)(5) → USE(4,sysvsem)/USE(5,sysvshm), 本地 patch -p1 验证通过
+              PATCH_FILE="$GITHUB_WORKSPACE/patches/kabi_tail_45.patch"
               ;;
             5.10|5.15|6.1|6.6)
               PATCH_FILE="$DROIDSPACES_PATCHES/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_${SLOT_NAME}.patch"
